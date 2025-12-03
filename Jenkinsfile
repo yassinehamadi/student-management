@@ -22,5 +22,20 @@ pipeline {
             }
         }
 
-    }
+
+     stage('DOCKER-BUILD') {
+                steps {
+                    sh "docker build -t student-management-app ."
+                    sh "docker tag student-management-app:latest yassinehamadi/student-management-app:latest"
+                }
+            }
+
+            stage('DOCKER-PUSH') {
+                steps {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                        sh "docker push yassinehamadi/student-management-app:latest"
+                    }
+                }
+     }
 }
