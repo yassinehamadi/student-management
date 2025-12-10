@@ -26,16 +26,18 @@ pipeline {
                 withSonarQubeEnv('sq1') {
                     withCredentials([string(credentialsId: 'jenkins-sonor', variable: 'SONAR_AUTH_TOKEN')]) {
                         sh """
-                            mvn sonar:sonar \
+                            mvn clean test jacoco:report sonar:sonar \
                             -Dsonar.projectKey=student-management \
                             -Dsonar.host.url=http://192.168.33.11:9000 \
                             -Dsonar.login=$SONAR_AUTH_TOKEN \
+                            -Dsonar.java.binaries=target/classes \
                             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
                         """
                     }
                 }
             }
         }
+
 
 
 
