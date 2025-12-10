@@ -21,6 +21,32 @@ pipeline {
                 sh 'mvn package'
             }
         }
+        stage('Analyse Qualité - SonarQube') {
+            steps {
+                withSonarQubeEnv('SonarQubeServer') {
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_AUTH_TOKEN')]) {
+                        sh """
+                            mvn sonar:sonar \
+                            -Dsonar.projectKey=student-management \
+                            -Dsonar.host.url=http://192.168.33.11:9000 \
+                            -Dsonar.login=$SONAR_AUTH_TOKEN \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                        """
+                    }
+                }
+            }
+        }
+
+
+
+        stage('Vérification Quality Gate') {
+            steps {
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
 
 
      stage('DOCKER-BUILD') {
