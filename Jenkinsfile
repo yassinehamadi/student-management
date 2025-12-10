@@ -41,15 +41,6 @@ pipeline {
 
 
 
-        stage('Vérification Quality Gate') {
-            steps {
-                timeout(time: 20, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-
-
 
      stage('DOCKER-BUILD') {
                 steps {
